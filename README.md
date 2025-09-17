@@ -1,35 +1,27 @@
-1. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+Pertanyaan dan Jawaban Tugas 3
 
-Dalam pengerjaan proyek ini, saya mulai dengan membuat repository git, lalu melakukan git clone. Setelah itu, saya menyalakan virtual environment agar mengisolasi dependensi proyek. Lalu, saya membuat file requirements.txt dan menginstall semua dependency yang dibutuhkan oleh proyek. Setelah semua berhasil terinstall, dilakukan konfigurasi settings.py, .env, serta .env.prod. Setelah itu, saya menyambungkan dan push proyek yang sudah dibuat ke Pacil Web Service (PWS).
+1. Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
 
-Setelah konfigurasi awal sudah selesai, saya mulai membuat model, template, dan bentukan awal web. Pertama saya buat folder main, dan di dalamnya folder templates dan di dalamnya lagi membuat file main.html. Pada file main.html, didefinisikan metadata doctype, head yang berupa title web, dan heading dan paragraph. Selanjutnya, pada file models.py di folder main, didefinisikan class Shop menggunakan library models yang tersedia. Pada class tersebut didefinisikan:
-• name: CharField, untuk menyimpan nama produk.
-• price: IntegerField, untuk menyimpan harga produk.
-• description: TextField, untuk deskripsi detail produk.
-• thumbnail: URLField, untuk menyimpan tautan gambar produk.
-• category: CharField, untuk mengkategorikan produk.
-• is_featured: BooleanField, untuk menandai apakah produk tersebut unggulan atau tidak.
+Data delivery menjadi semacam "backbone" dari pengembangan sebuah platform. Data delivery dapat menentukan kecepatan, keamanan, dan seberapa akurat informasi ditukar antara server dan database ke pengguna.
 
-Selanjutnya, saya melakukan proses migrasi data dan routing. Akhirnya, saya melakukan push akhir ke git dan PWS.
+2. Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
 
-2. Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html.
+Dari yang saya ketahui, perbedaan dari XML dan JSON yang terutama terlihat adalah bahwa JSON lebih mudah dilihat dan dicerna informasinya karena penampilan yang lebih "clean". Namun, XML bisa lebih cocok untuk dokumen dan project yang menggunakan data structure lebih complex karena dapat diextend dengan custom data types. Tapi, untuk mayoritas orang, JSON lebih mudah digunakan karena sifatnya yang lebih simpel.
 
-Bagan tercantum pada link berikut: ristek.link/BaganRoutingDjango
+3. Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?
 
-Dalam Django, ketika pengguna mengakses sebuah URL, permintaan tersebut pertama kali diproses oleh urls.py, yang berfungsi untuk memetakan pola URL ke fungsi tertentu di views.py. View kemudian menangani permintaan tersebut dan, jika diperlukan, berinteraksi dengan models.py untuk mengambil atau menyimpan data ke dalam database. Setelah data yang dibutuhkan tersedia, view meneruskannya ke template seperti main.html, di mana data tersebut dirender menjadi HTML dan ditampilkan kepada pengguna.
+Dalam Django, method is_valid() digunakan untuk memeriksa apakah data yang dimasukkan ke dalam form sudah sesuai dengan aturan validasi. Jika valid, Django akan menyediakan data yang sudah dibersihkan melalui cleaned_data sehingga aman untuk digunakan atau disimpan ke database. Jika tidak valid, method ini akan menyimpan pesan kesalahan di form.errors agar bisa ditampilkan ke pengguna. Dengan demikian, is_valid() penting untuk menjaga keamanan, konsistensi data, dan memberikan feedback yang jelas kepada pengguna.
 
-3. Jelaskan peran settings.py dalam proyek Django!
+4. Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?
 
-Dalam proyek Django, settings.py berfungsi sebagai pengaturan dan pusat kendalinya proyek tersebut, semacam control panel. Hal ini termasuk juga konfigurasi fundamental yang dibutuhkan seperti aplikasi yang digunakan, template, database, dll.. 
+csrf_token digunakan sebagai lapisan keamanan untuk mencegah serangan Cross-Site Request Forgery (CSRF). Token ini adalah kode unik yang dikirim bersama form dan diverifikasi oleh server ketika form dikirim kembali. Jika csrf_token tidak ditambahkan, maka form menjadi rentan terhadap serangan tersebut. Artinya, penyerang bisa membuat sebuah halaman berbahaya yang diam-diam mengirim permintaan ke server Django dengan memanfaatkan sesi pengguna yang sedang login. Misalnya, tanpa disadari pengguna bisa dipaksa melakukan aksi penting seperti mengubah password, melakukan transaksi, atau menghapus data, hanya karena ia membuka situs berbahaya saat masih login di aplikasi. Dengan kata lain, tanpa csrf_token, penyerang dapat menyamar sebagai pengguna sah dan memanfaatkan sesi autentikasi korban untuk menjalankan aksi berbahaya.
 
-4. Bagaimana cara kerja migrasi database di Django?
+5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
 
-Migrasi di Django digunakan untuk "synchronize" perubahan yang dilakukan ke model kepada database. Simpelnya, proses ini dilakukan dalam dua tahap, yaitu pertama dengan command makemigrations lalu dengan command migrate. Command makemigrations akan ngescan model dan membandingkannya dengan versi yang sekarang ada. Lalu, akan mempersiapkan hal baru yang ingin dimigrate. Lalu, command migrate akan "push" migration yang sudah disiapkan oleh makemigrations ke database. Ini bisa diperkirakan seperti version control untuk database proyek.
+Pertama, saya mengubah model Shop yang saya buat pada tugas sebelumnya menjadi model Item karena menurut saya lebih cocok untuk kedepannya. Lalu, saya tambahkan fungsi-fungsi untuk XML dan JSON, lalu push ke github sebagai langkah awal. Setelah itu, saya menambahkan base.html di direktori baru pada main dan mengisinya dengan metadata yang diperlukan untuk project ini. Lalu, saya sesuaikan main.html dan mulai menambahkan fungsi create_item dan show_item pada views.py. Kemudian, saya menyesuaikan urlpattern pada urls.py dan membuat tampilan untuk keduanya dengan membuat create_item.html dan juga show_item.html. Setelah itu, saya lakukan migrasi dan melakukan testing functionality yang baru dibuat. Terakhir, saya push ke github dan pws.
 
-5. Menurut Anda, dari semua framework yang ada, mengapa framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak?
+6. Apakah ada feedback untuk asdos di tutorial 2 yang sudah kalian kerjakan?
 
-Menurut saya, Django dijadikan framework untuk permulaan pembelajaran pengembangan perangkat lunak karena beberapa hal yang membuatnya beginner-friendly. Pertama, Django berbasis python yang merupakan high level language yang mudah dipahami. Django memiliki documentation yang sangat luas dan bisa diexplore, dengan memiliki banyak modules dan libraries yang sudah tersedia. Django juga menyediakan banyak hal yang untuk pemula sangat bingung untuk diimplementasikan, seperti ORM, admin interface, sistem autentikasi, dan bahkan fitur keamanan.
+Tidak ada kak, menurut saya sudah cukup jelas dan sangat membantu memahami kode yang ditulis.
 
-6. Apakah ada feedback untuk asisten dosen tutorial 1 yang telah kamu kerjakan sebelumnya?
-
-Tidak ada kak, sudah sangat bagus dan saya sangat mengapresiasi penjelasan yang diberi untuk setiap kodenya sehingga bisa memahami kodenya dan tidak hanya copy-paste saja.
+7. Screenshot Postman : ristek.link/ScreenshotPostmanTugas3PBP
