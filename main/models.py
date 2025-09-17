@@ -2,7 +2,7 @@ import uuid
 from django.db import models
 
 # Create your models here.
-class Shop(models.Model):
+class Item(models.Model):
     CATEGORIES = [
         ('shoes', 'Shoes'),
         ('balls', 'Balls'),
