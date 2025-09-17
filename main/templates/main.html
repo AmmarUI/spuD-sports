@@ -1,11 +1,40 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>spuD's Shop</title>
-    </head>
-    <body>
-        <h1>Welcome, {{ user }} to spuD's Shop!</h1>
+{% extends 'base.html' %}
+{% block content %}
+<h1>Welcome, {{ user }} to spuD's Shop!</h1>
 
-        <p>Lorem ipsum dolor sit amet</p>
-    </body>
-</html>
+<a href = "{% url 'main:create_item' %}""> 
+    <button> + Add Item </button>
+</a>
+
+<hr>
+
+{%if not item_list%}
+<p> Belum ada item yang dijual. </p>
+{%else%}
+
+{%for item in item_list%}
+<div>
+    <h2><a href = "{% url 'main:show_item' item.id}">{{ item.name }}</a></h2>
+    <p><b>Price: {{ item.price }}</b></p>
+
+    <p><b>{{ item.get_category_display }}</b>{% if item.is_featured %} | 
+    <b>Featured</b>{% endif %}
+
+    {% if item.thumbnail %}
+    <br />
+    <img src="{{ item.thumbnail }}" alt="thumbnail" width="150" height="100">
+    <br /> <br />
+    {% endif %}
+
+    <p>{{ item.description|truncatewords:25 }}...</p>
+
+    <p><a href="{% url 'main:show_item' item.id %}"><button>Read More</button></a></p>
+</div>
+
+<hr>
+
+{%endfor%}
+
+{%endif%}
+
+{% endblock content %}

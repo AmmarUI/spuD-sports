@@ -1,15 +1,41 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.core import serializers
 from .models import Item
+from .forms import ItemForm
 
 # Create your views here.
 def show_main(request):
+    item_list = Item.objects.all()
+
     context = {
         'user' : 'Ammar',
+        'item_list': item_list
     }
 
     return render(request, "main.html", context)   
+
+def create_item(request):
+    form = ItemForm(request.POST or None)
+
+    if form.is_valid() and request.method=="POST":
+        form.save()
+        return redirect('main:show_main')
+    
+    context = {
+        'form':form
+    }
+
+    return render(request, "create_item.html", context)
+
+def show_item(request, id):
+    item = get_object_or_404(Item, pk=id)
+
+    context = {
+        'item' : item
+    }
+
+    return render(request, 'show_item.html', context)
 
 def show_xml(request):
     item_list = Item.objects.all()
