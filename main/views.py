@@ -4,12 +4,18 @@ from django.core import serializers
 from .models import Item
 from .forms import ItemForm
 
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import authenticate, login
+
 # Create your views here.
 def show_main(request):
     item_list = Item.objects.all()
 
     context = {
         'user' : 'Ammar',
+        'nama' : 'Abdurrahman Ammar Abqary',
+        'npm' : '2406495994',
+        'class' : 'PBP D',
         'item_list': item_list
     }
 
@@ -36,6 +42,20 @@ def show_item(request, id):
     }
 
     return render(request, 'show_item.html', context)
+
+def login_user(request):
+    if request.method == 'POST':
+      form = AuthenticationForm(data=request.POST)
+
+      if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('main:show_main')
+    else:
+        form = AuthenticationForm(request)
+    
+    context = {'form': form}
+    return render(request, 'login.html', context)
 
 def show_xml(request):
     item_list = Item.objects.all()

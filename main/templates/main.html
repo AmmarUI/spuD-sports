@@ -2,6 +2,10 @@
 {% block content %}
 <h1>Welcome, {{ user }} to spuD's Shop!</h1>
 
+<p>Nama : {{ nama }}</p>
+<p>NPM  : {{ npm }}</p>
+<p>Kelas: {{ class }}</p>
+
 <a href = "{% url 'main:create_item' %}""> 
     <button> + Add Item </button>
 </a>
@@ -14,7 +18,7 @@
 
 {%for item in item_list%}
 <div>
-    <h2><a href = "{% url 'main:show_item' item.id}">{{ item.name }}</a></h2>
+    <h2><a href = "{% url 'main:show_item' item.id %}">{{ item.name }}</a></h2>
     <p><b>Price: {{ item.price }}</b></p>
 
     <p><b>{{ item.get_category_display }}</b>{% if item.is_featured %} | 
