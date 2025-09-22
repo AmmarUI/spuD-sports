@@ -11,6 +11,7 @@ class Item(models.Model):
         ('shorts', 'Shorts')
     ]
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField()
     price = models.IntegerField()
     description = models.TextField()
