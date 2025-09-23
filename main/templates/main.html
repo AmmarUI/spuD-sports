@@ -21,6 +21,7 @@
 {%for item in item_list%}
 <div>
     <h2><a href = "{% url 'main:show_item' item.id %}">{{ item.name }}</a></h2>
+    <p>Stock: {{ item.stock }}</p>
     <p><b>Price: {{ item.price }}</b></p>
 
     <p><b>{{ item.get_category_display }}</b>{% if item.is_featured %} | 
@@ -33,6 +34,8 @@
     {% endif %}
 
     <p>{{ item.description|truncatewords:25 }}...</p>
+
+    <p>Seller: {{ item.user }}</p>
 
     <p><a href="{% url 'main:show_item' item.id %}"><button>Read More</button></a></p>
 </div>
