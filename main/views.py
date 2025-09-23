@@ -4,10 +4,13 @@ from django.core import serializers
 from .models import Item
 from .forms import ItemForm
 
+from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+@login_required(login_url='/login')
 def show_main(request):
     item_list = Item.objects.all()
 
@@ -21,6 +24,7 @@ def show_main(request):
 
     return render(request, "main.html", context)   
 
+@login_required(login_url='/login')
 def create_item(request):
     form = ItemForm(request.POST or None)
 
@@ -56,6 +60,23 @@ def login_user(request):
     
     context = {'form': form}
     return render(request, 'login.html', context)
+
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+        
+    context = {'form':form}
+    return render(request, 'register.html', context)
+
+def logout_user(request):
+    logout(request)
+    return redirect('main:login')
 
 def show_xml(request):
     item_list = Item.objects.all()
