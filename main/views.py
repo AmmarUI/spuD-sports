@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 from django.core import serializers
 from .models import Item
 from .forms import ItemForm
@@ -9,17 +10,25 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
+import datetime
+
 # Create your views here.
 @login_required(login_url='/login')
 def show_main(request):
-    item_list = Item.objects.all()
+    filter_type = request.GET.get("filter", "all")
+
+    if filter_type == "all":
+        item_list = Item.objects.all()
+    else:
+        item_list = Item.objects.filter(user=request.user)
 
     context = {
-        'user' : 'Ammar',
+        'user' : request.user.username,
         'nama' : 'Abdurrahman Ammar Abqary',
         'npm' : '2406495994',
         'class' : 'PBP D',
-        'item_list': item_list
+        'item_list': item_list,
+        'last_login': request.COOKIES.get('last_login', 'Never')
     }
 
     return render(request, "main.html", context)   
@@ -29,7 +38,10 @@ def create_item(request):
     form = ItemForm(request.POST or None)
 
     if form.is_valid() and request.method=="POST":
-        form.save()
+        item_entry = form.save(commit=False)
+        item_entry.user = request.user
+        item_entry.save() 
+
         return redirect('main:show_main')
     
     context = {
@@ -54,7 +66,9 @@ def login_user(request):
       if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('main:show_main')
+            response = HttpResponseRedirect(reverse("main:show_main"))
+            response.set_cookie('last_login', str(datetime.datetime.now()))
+            return response
     else:
         form = AuthenticationForm(request)
     
@@ -76,6 +90,8 @@ def register(request):
 
 def logout_user(request):
     logout(request)
+    response = HttpResponseRedirect(reverse('main:login'))
+    response.delete_cookie('last_login')
     return redirect('main:login')
 
 def show_xml(request):
