@@ -12,7 +12,6 @@ from django.contrib.auth.decorators import login_required
 
 import datetime
 
-# Create your views here.
 @login_required(login_url='/login')
 def show_main(request):
     filter_type = request.GET.get("filter", "all")
@@ -58,6 +57,24 @@ def show_item(request, id):
     }
 
     return render(request, 'show_item.html', context)
+
+def edit_item(request, id):
+    item = get_object_or_404(Item, pk=id)
+    form = ItemForm(request.POST or None, instance=item)
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_main')
+
+    context = {
+        'form': form
+    }
+
+    return render(request, "edit_item.html", context)
+
+def delete_item(request, id):
+    item = get_object_or_404(Item, pk=id)
+    item.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
 
 def login_user(request):
     if request.method == 'POST':
