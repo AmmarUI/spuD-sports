@@ -22,8 +22,7 @@ def show_main(request):
         item_list = Item.objects.filter(user=request.user)
 
     context = {
-        'user' : request.user.username,
-        'nama' : 'Abdurrahman Ammar Abqary',
+        'name' : request.user.username,
         'npm' : '2406495994',
         'class' : 'PBP D',
         'item_list': item_list,
