@@ -2,9 +2,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+{% block meta %} 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    {% block meta %} {% endblock meta %}
+{% endblock meta %}
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<!--custom fonts for heading and body-->
+<script>
+    tailwind.config = {
+        theme: {
+        extend: {
+            fontFamily: {
+            heading: ['Lexend', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+            },
+        },
+        },
+    }
+</script>
+<link rel="stylesheet" href="{% static 'css/global.css' %}"/>
 </head>
 
 <body>
