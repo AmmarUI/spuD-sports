@@ -7,51 +7,125 @@
 
 {% block content %}
 {% include 'navbar.html' %}
-<div class="bg-gray-50 w-full pt-16 min-h-screen">
+<div class="bg-gradient-to-br from-[#7c5295] via-[#000000] to-[#d71515] w-full pt-16 min-h-screen">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <!-- Header Section -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">Sports Essentials</h1>
-      <p class="text-gray-600">The best online store for all your sporting needs</p>
+      <h1 class="text-3xl font-bold text-white mb-2">Sports Essentials</h1>
+      <p class="text-white">The best online store for all your sporting needs</p>
     </div>
 
-    <!-- Filter Section -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-white rounded-lg border border-gray-200 p-4">
-      <div class="flex space-x-3 mb-4 sm:mb-0">
-        <a href="?" class="{% if request.GET.filter == 'all' or not request.GET.filter  %} bg-purple-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-purple-600 hover:text-white">
-          All Products
-        </a>
-        <a href="?filter=my" class="{% if request.GET.filter == 'my' %} bg-purple-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-purple-600 hover:text-white">
-          My Products
-        </a>
-      </div>
-      {% if user.is_authenticated %}
-        <div class="text-sm text-gray-500">
-          Last login: {{ last_login }}
-        </div>
-      {% endif %}
+    <!-- AJAX Controls -->
+    <div class="flex items-center gap-3 mb-4">
+      <button onclick="showModal()" class="inline-flex items-center px-4 py-2 bg-white text-green-600 font-semibold outline outline-2 outline-green-600 outline-offset-[-2px] rounded-md hover:bg-green-600 hover:text-white transition-colors">
+        Create Product (AJAX)
+      </button>
+      <button id="refresh-btn" class="inline-flex items-center px-3 py-2 border rounded-md text-white">Refresh</button>
     </div>
 
-    <!-- Item Grid -->
-    {% if not item_list %}
-      <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
-        <div class="w-32 h-32 mx-auto mb-4">
-          <img src="{% static 'image/no-item.png' %}" alt="No item available" class="w-full h-full object-contain">
-        </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-        <p class="text-gray-500 mb-6">Get your product out there now!</p>
-        <a href="{% url 'main:create_item' %}" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors">
-          Add Product
-        </a>
-      </div>
-    {% else %}
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for item in item_list %}
-          {% include 'item_card.html' with item=item %}
-        {% endfor %}
-      </div>
-    {% endif %}
+    <!-- Loading, Error, Empty, Grid -->
+    <div id="loading" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+      <svg class="animate-spin h-8 w-8 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <p class="text-gray-600 mt-3">Loading products...</p>
+    </div>
+    <div id="error" class="hidden text-red-600 p-4"></div>
+    <div id="empty" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+      <h3 class="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+      <p class="text-gray-500 mb-6">Create the first product using the button above.</p>
+    </div>
+    <div id="grid" class="grid gap-6 
+      grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+  </div>
   </div>
 </div>
+
+<script>
+  const ITEM_API_ENDPOINT = "{% url 'main:show_json' %}";
+  const DELETE_API_ENDPOINT = "{% url 'main:delete_item_ajax' %}";
+  const refreshBtn = document.getElementById('refresh-btn');
+  const loadingEl = document.getElementById('loading');
+  const errorEl = document.getElementById('error');
+  const emptyEl = document.getElementById('empty');
+  const gridEl = document.getElementById('grid');
+
+  function showSection({loading=false, error=false, empty=false, grid=false}) {
+    loadingEl.classList.toggle('hidden', !loading);
+    errorEl.classList.toggle('hidden', !error);
+    emptyEl.classList.toggle('hidden', !empty);
+    gridEl.classList.toggle('hidden', !grid);
+  }
+  function categoryLabel(code) {
+    const map = {shoes:'Shoes', balls:'Balls', jerseys:'Jerseys', socks:'Socks', shorts:'Shorts'};
+    return map[code] || code;
+  }
+  function buildCard(item) {
+    const card = document.createElement('a');
+    card.href = `/item/${item.id}`;
+    card.className = `
+    w-full w-max-sm
+    bg-white/5 backdrop-blur-md rounded-lg border-4 border-white/20 
+    hover:shadow transition overflow-hidden flex flex-col 
+    transform transition duration-200 hover:scale-105
+    `;
+    const thumb = item.thumbnail ? `<img src='${item.thumbnail}' alt='${item.name}' class='w-full h-full object-cover rounded-sm'>` : '';
+    const featured = item.is_featured ? `<span class='inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800'>Featured</span>` : '';
+    card.innerHTML = `
+      <div class="p-2 rounded-lg">${thumb}</div>
+      <div class="p-4 flex-1 flex flex-col">
+        <div class="flex items-center justify-between mb-2">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-green-600 text-white">${categoryLabel(item.category)}</span>
+          <div class="flex gap-2">${featured}</div>
+        </div>
+        <h3 class="text-lg font-semibold mb-2 text-gray-200">${item.name}</h3>
+        <div class="mt-auto flex items-center justify-between text-purple-600">
+          <span class="font-semibold">$ ${item.price}</span>
+          <div class="flex gap-3">
+            <button class="text-gray-100 hover:text-gray-400 text-sm" onclick='showModal(${JSON.stringify({})})'>Edit</button>
+            <button class="text-red-600 hover:text-red-700 text-sm" onclick="handleDelete('${item.id}')">Delete</button>
+          </div>
+        </div>
+      </div>`;
+    return card;
+  }
+  function renderItems(items) {
+    gridEl.innerHTML = '';
+    if (!items || items.length === 0) {
+      showSection({empty:true});
+      return;
+    }
+    items.forEach(item => gridEl.appendChild(buildCard(item)));
+    showSection({grid:true});
+  }
+  async function fetchItems() {
+    try {
+      showSection({loading:true});
+      const res = await fetch(ITEM_API_ENDPOINT, {headers: {'Accept':'application/json'}});
+      if (!res.ok) throw new Error('Failed to load items');
+      const data = await res.json();
+      renderItems(data);
+    } catch (e) {
+      errorEl.textContent = e.message;
+      showSection({error:true});
+    }
+  }
+  async function handleDelete(id) {
+    if (!confirm('Delete this product?')) return;
+    const form = new FormData();
+    form.append('id', id);
+    const res = await fetch(DELETE_API_ENDPOINT, {method:'POST', body: form});
+    if (res.ok) {
+      showToast('Product deleted', '', 'success');
+      document.dispatchEvent(new CustomEvent('itemsChanged'));
+    } else {
+      showToast('Delete failed', '', 'error');
+    }
+  }
+  refreshBtn.addEventListener('click', fetchItems);
+  document.addEventListener('itemsChanged', fetchItems);
+  fetchItems();
+</script>
 {% endblock content %}

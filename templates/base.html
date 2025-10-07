@@ -7,7 +7,6 @@
     {% block meta %} {% endblock meta %}
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!--custom fonts for heading and body-->
     <script>
         tailwind.config = {
             theme: {
@@ -25,5 +24,8 @@
 
 <body>
     {% block content %} {% endblock content %}
+
+    {% include 'toast.html' %}
+    {% include 'modal.html' %}
 </body>
 </html>

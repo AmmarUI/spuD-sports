@@ -1,19 +1,19 @@
-<nav class="fixed top-0 left-0 w-full bg-white border-b border-gray-200 shadow-sm z-50">
+<nav class="fixed top-0 left-0 w-full bg-linear-to-b from-[#7c5295] via-[#000000] to-[#d71515]">
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center">
           <h1 class="text-xl font-semibold text-gray-900">
-            <span class="text-purple-800">spuD</span> 
-            <span class="text-red-900">Store</span>
+            <span class="text-purple-600">spuD</span> 
+            <span class="text-red-600">Store</span>
           </h1>
         </div>
         
         <!-- Desktop Navigation -->
         <div class="hidden md:flex items-center space-x-8">
-          <a href="/" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+          <a href="/" class="text-white hover:text-gray-400 font-medium transition-colors">
             Home
           </a>
-          <a href="{% url 'main:create_item' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+          <a href="{% url 'main:create_item' %}" class="text-white hover:text-gray-400 font-medium transition-colors">
             Add Product
           </a>
         </div>
@@ -22,8 +22,8 @@
         <div class="hidden md:flex items-center space-x-6">
           {% if user.is_authenticated %}
             <div class="text-right">
-              <div class="text-sm font-medium text-gray-900">{{ name|default:user.username }}</div>
-              <div class="text-xs text-gray-500">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
+              <div class="text-sm font-medium text-white">{{ name|default:user.username }}</div>
+              <div class="text-xs text-gray-400">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
             </div>
             <a href="{% url 'main:logout' %}" class="text-red-600 hover:text-red-700 font-medium transition-colors">
               Logout

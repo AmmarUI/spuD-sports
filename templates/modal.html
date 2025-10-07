@@ -1,0 +1,98 @@
+{% load static %}
+<div id="modal" class="fixed z-50 inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden">
+  <div class="bg-white rounded-xl max-w-2xl w-full p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 id="modal-title" class="text-xl font-semibold">Create Product</h2>
+      <button onclick="hideModal()" class="text-gray-500 hover:text-gray-700">✕</button>
+    </div>
+    <form id="itemForm" class="space-y-4">
+      <input type="hidden" name="id" id="item-id">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium">Name</label>
+          <input type="text" name="name" id="name" class="mt-1 w-full border rounded-md p-2" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Stock</label>
+          <input type="number" name="stock" id="stock" class="mt-1 w-full border rounded-md p-2" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Price</label>
+          <input type="number" name="price" id="price" class="mt-1 w-full border rounded-md p-2" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Category</label>
+          <select name="category" id="category" class="mt-1 w-full border rounded-md p-2">
+            <option value="shoes">Shoes</option>
+            <option value="balls">Balls</option>
+            <option value="jerseys">Jerseys</option>
+            <option value="socks">Socks</option>
+            <option value="shorts">Shorts</option>
+          </select>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium">Thumbnail URL</label>
+          <input type="url" name="thumbnail" id="thumbnail" class="mt-1 w-full border rounded-md p-2">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium">Description</label>
+          <textarea name="description" id="description" class="mt-1 w-full border rounded-md p-2" rows="3"></textarea>
+        </div>
+        <div class="md:col-span-2 flex items-center gap-2">
+          <input type="checkbox" name="is_featured" id="is_featured" class="border rounded">
+          <label for="is_featured" class="text-sm">Featured</label>
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 pt-4">
+        <button type="button" onclick="hideModal()" class="px-4 py-2 rounded-md border">Cancel</button>
+        <button id="modal-submit-btn" type="submit" class="px-4 py-2 rounded-md bg-green-600 text-white">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function showModal(item = null) {
+    document.getElementById('modal').classList.remove('hidden');
+    const title = document.getElementById('modal-title');
+    const form = document.getElementById('itemForm');
+    form.reset();
+
+    if (item) {
+      title.textContent = 'Update Product';
+      document.getElementById('item-id').value = item.id;
+      document.getElementById('name').value = item.name;
+      document.getElementById('stock').value = item.stock;
+      document.getElementById('price').value = item.price;
+      document.getElementById('category').value = item.category;
+      document.getElementById('thumbnail').value = item.thumbnail || '';
+      document.getElementById('description').value = item.description || '';
+      document.getElementById('is_featured').checked = !!item.is_featured;
+    } else {
+      title.textContent = 'Create Product';
+      document.getElementById('item-id').value = '';
+    }
+  }
+  function hideModal() {
+    document.getElementById('modal').classList.add('hidden');
+  }
+
+  // Submit handler (create or update)
+  document.getElementById('itemForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const id = document.getElementById('item-id').value.trim();
+    const formData = new FormData(this);
+    if (id) formData.append('id', id);
+
+    const url = id ? "{% url 'main:update_item_entry_ajax' %}" : "{% url 'main:add_item_entry_ajax' %}";
+    const resp = await fetch(url, { method: "POST", body: formData });
+
+    if (resp.ok) {
+      hideModal();
+      showToast(id ? 'Product updated' : 'Product created', '', 'success');
+      document.dispatchEvent(new CustomEvent('itemsChanged'));
+    } else {
+      showToast('Failed to submit form', 'Please check inputs', 'error');
+    }
+  });
+</script>
