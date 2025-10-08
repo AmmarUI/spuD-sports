@@ -27,5 +27,17 @@
 
     {% include 'toast.html' %}
     {% include 'modal.html' %}
-</body>
+
+    <!--so toast doesnt disappear on refresh/on page change-->
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const data = localStorage.getItem("toast");
+    if (data) {
+        const {title, message, type} = JSON.parse(data);
+        showToast(title, message, type);
+        localStorage.removeItem("toast"); // clear so it shows only once
+    }
+    });
+    </script>
+    </body>
 </html>

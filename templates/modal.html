@@ -90,9 +90,12 @@
     if (resp.ok) {
       hideModal();
       showToast(id ? 'Product updated' : 'Product created', '', 'success');
-      document.dispatchEvent(new CustomEvent('itemsChanged'));
+      setTimeout(() => {
+        document.dispatchEvent(new CustomEvent('itemsChanged'));
+      }, 1200); // wait ~1.2s before refreshing list
     } else {
       showToast('Failed to submit form', 'Please check inputs', 'error');
     }
+
   });
 </script>

@@ -119,10 +119,13 @@
     const res = await fetch(DELETE_API_ENDPOINT, {method:'POST', body: form});
     if (res.ok) {
       showToast('Product deleted', '', 'success');
-      document.dispatchEvent(new CustomEvent('itemsChanged'));
+      setTimeout(() => {
+        document.dispatchEvent(new CustomEvent('itemsChanged'));
+      }, 1200);
     } else {
       showToast('Delete failed', '', 'error');
     }
+
   }
   refreshBtn.addEventListener('click', fetchItems);
   document.addEventListener('itemsChanged', fetchItems);

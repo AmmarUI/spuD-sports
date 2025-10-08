@@ -23,7 +23,6 @@
 </div>
 
 <script>
-  /* AJAX auth */
   const form = document.querySelector('form');
   if (form) {
     form.addEventListener('submit', async (e) => {
@@ -33,13 +32,19 @@
         body: new FormData(form),
       });
       if (res.ok) {
-        showToast('Logged in', '', 'success');
+        // Store toast in localStorage so it shows after redirect
+        localStorage.setItem("toast", JSON.stringify({
+          title: "Logged in",
+          message: "",
+          type: "success"
+        }));
         window.location.href = "{% url 'main:show_main' %}";
       } else {
         const data = await res.json().catch(()=>({}));
-        showToast(data.error || 'Login failed', '', 'error');
+        showToast(data.error || "Login failed", "", "error");
       }
     });
   }
 </script>
+
 {% endblock content %}

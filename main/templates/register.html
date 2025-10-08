@@ -23,7 +23,6 @@
 </div>
 
 <script>
-  /* AJAX auth */
   const form = document.querySelector('form');
   if (form) {
     form.addEventListener('submit', async (e) => {
@@ -33,13 +32,18 @@
         body: new FormData(form),
       });
       if (res.ok) {
-        showToast('Registered', '', 'success');
+        localStorage.setItem("toast", JSON.stringify({
+          title: "Registered",
+          message: "",
+          type: "success"
+        }));
         window.location.href = "{% url 'main:show_main' %}";
       } else {
         const data = await res.json().catch(()=>({}));
-        showToast('Registration failed', JSON.stringify(data.errors || {}), 'error');
+        showToast("Registration failed", JSON.stringify(data.errors || {}), "error");
       }
     });
   }
 </script>
+
 {% endblock content %}
