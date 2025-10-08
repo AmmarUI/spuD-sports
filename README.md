@@ -1,13 +1,19 @@
 # spuD Sports ⚽
-Nama : Abdurrahman Ammar Abqary
-NPM : 2406495994
-Kelas : PBP D
+#### Nama : Abdurrahman Ammar Abqary
 
-History README Tugas:
-[Tugas 2](https://github.com/AmmarUI/spuD-sports/wiki/README-Tugas-2)
-[Tugas 3](https://github.com/AmmarUI/spuD-sports/wiki/README-Tugas-3)
-[Tugas 4](https://github.com/AmmarUI/spuD-sports/wiki/README-Tugas-4)
-[Tugas 5](https://github.com/AmmarUI/spuD-sports/wiki/README-Tugas-5)
+#### NPM : 2406495994
+
+#### Kelas : PBP D
+
+### History README Tugas:
+
+- [***Tugas 2***](https://github.com/AmmarUI/spuD-sports/wiki/README-Tugas-2)
+
+- [***Tugas 3***](https://github.com/AmmarUI/spuD-sports/wiki/README-Tugas-3)
+
+- [***Tugas 4***](https://github.com/AmmarUI/spuD-sports/wiki/README-Tugas-4)
+
+- [***Tugas 5***](https://github.com/AmmarUI/spuD-sports/wiki/README-Tugas-5)
 
 ---
 
